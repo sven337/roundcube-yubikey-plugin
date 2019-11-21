@@ -80,6 +80,13 @@ class roundcube_yubikey_authentication extends rcube_plugin
   function login_after($args)
   {
     if (!$this->is_enabled() || !$this->is_required()) return $args;
+	
+	$ip =  rcube_utils::remote_addr();
+	if (strpos($ip, "192.168.") !== FALSE) {
+		// !== is on purpose ("not identical" operator in php)
+		// If the remote IP matches 192.168., don't require OTP
+		return $args;
+	}
  
     $otp = rcube_utils::get_input_value('_yubikey', rcube_utils::INPUT_POST);
     $id = $this->get('yubikey_id');
